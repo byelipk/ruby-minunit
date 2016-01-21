@@ -10,13 +10,21 @@ class Minunit
     return message if test == false
   end
 
-  def run_test(test)
-    message = test.call()
+  def run_test(test=nil)
+    message = if block_given?
+      yield
+    elsif test && test.respond_to?(:call)
+      test.call()
+    else
+      raise "ERROR: No Test Given"
+    end
+
     if message
-      puts message
       @tests_failed = tests_failed + 1
+      puts message
     else
       @tests_passed = tests_passed + 1
+      puts "TEST PASSED"
     end
   end
 end
